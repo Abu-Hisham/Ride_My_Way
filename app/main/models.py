@@ -1,3 +1,8 @@
+from werkzeug.security import generate_password_hash, check_password_hash
+import base64
+from datetime import datetime, timedelta
+import os
+
 class User(object):
     users = []
 
@@ -8,9 +13,22 @@ class User(object):
         self.password_hash = self.generate_password_hash(password)
         self.friends = []
         self.messages = []
+        self.token = ""
+        self.token_expiration = 0
+
+    def get_token(self, expires_in = 3600):
+        now = datetime.utcnow()
+        if self.token and self.token_expiration > now + timedelta(seconds=60):
+            return self.token
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        self.token_expiration = now + timedelta(seconds=expires_in)
+        return self.token
 
     def generate_password_hash(self, password):
-        return password
+        self.password_hash = generate_password_hash (password)
+
+    def check_password(self, password):
+        return check_password_hash (self.password_hash, password)
 
     def create_ride_offer(self):
         pass
@@ -23,6 +41,17 @@ class User(object):
 
     def accept_friend_request(self):
         pass
+
+    def __iter__(self):
+        self.__index = -1
+        return self
+
+    def __next__(self):
+        if self.__index >= len(User.users) - 1:
+            raise StopIteration
+        self.__index += 1
+        user = User.user[self.__index]
+        return user
 
     def __repr__(self):
         return {'email':self.email,
@@ -56,6 +85,17 @@ class RideOffer(object):
     def respond_to_request(self, request_id):
         pass
 
+    def __iter__(self):
+        self.__index = -1
+        return self
+
+    def __next__(self):
+        if self.__index >= len(RideOffer.ride_offers) - 1:
+            raise StopIteration
+        self.__index += 1
+        rideOffer = RideOffer.ride_offers[self.__index]
+        return rideOffer
+
     def __repr__(self):
         return {
                 'ride_id':self.ride_id,
@@ -83,6 +123,17 @@ class RideRequest(object):
     def notify_user(self, userEmail):
         pass
 
+    def __iter__(self):
+        self.__index = -1
+        return self
+
+    def __next__(self):
+        if self.__index >= len(RideRequest.ride_requests) - 1:
+            raise StopIteration
+        self.__index += 1
+        rideRequest = RideRequest.ride_requests[self.__index]
+        return rideRequest
+
     def __repr__(self):
         return {
                 'request_id': self.request_id,
@@ -103,6 +154,17 @@ class Message(object):
 
     def delete(self):
         pass
+
+    def __iter__(self):
+        self.__index = -1
+        return self
+
+    def __next__(self):
+        if self.__index >= len(Message.messages) - 1:
+            raise StopIteration
+        self.__index += 1
+        message = Message.messages[self.__index]
+        return message
 
     def __repr__(self):
         return {

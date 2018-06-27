@@ -48,7 +48,7 @@ class RideMyWayTestCase(unittest.TestCase):
         # self.assertEqual(res.data, new_time)
 
     def test_user_can_request_ride_offer(self):
-        res = self.client.post('api/v1/main/ride_offers/ride_requests/' , data=json.dumps(self.rideRequest.__repr__(), headers = {'content-type': 'application/json'}))
+        res = self.client.post('api/v1/main/ride_offers/ride_requests/', data=json.dumps(self.rideRequest.__repr__(), headers = {'content-type': 'application/json'}))
         self.assertEqual(res.status_code, 201)
         self.assertDictEqual(res.data, self.rideRequest.__repr__())
 
