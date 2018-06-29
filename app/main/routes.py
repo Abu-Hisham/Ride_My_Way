@@ -51,7 +51,7 @@ def basic_auth_error():
 
 
 @bp_main.route('login', methods = ['POST'])
-@basic_auth.login_required
+# @basic_auth.login_required
 def login():
     data = request.get_json()
     user = User.get_user_by_email(data['email'])
@@ -70,7 +70,7 @@ def login():
 
 
 @bp_main.route('users/<string:user_email>/rides', methods = ['POST'])
-@basic_auth.login_required
+# @basic_auth.login_required
 def create_ride_offer(user_email, **kwargs):
     data = request.get_json()
     user = User.get_user_by_email(user_email)
@@ -86,7 +86,7 @@ def create_ride_offer(user_email, **kwargs):
 
 
 @bp_main.route('users/rides/<int:ride_id>', methods = ['GET'])
-@basic_auth.login_required
+# @basic_auth.login_required
 def get_a_ride_offer(ride_id, **kwargs):
     for ride in RideOffer.rideOffers:
         if ride.ride_id == ride_id:
@@ -101,7 +101,7 @@ def get_a_ride_offer(ride_id, **kwargs):
 
 
 @bp_main.route('users/rides', methods = ['GET'])
-@basic_auth.login_required
+# @basic_auth.login_required
 def get_ride_offers():
     message = {}
     count = 1
@@ -114,7 +114,7 @@ def get_ride_offers():
 
 
 @bp_main.route('users/rides/<int:ride_id>/requests', methods = ['POST'])
-@basic_auth.login_required
+# @basic_auth.login_required
 def request_ride(ride_id, **kwargs):
     data = request.get_json()
     ride = RideOffer.get_ride_by_id(ride_id)
