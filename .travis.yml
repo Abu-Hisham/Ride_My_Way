@@ -8,7 +8,6 @@ install:
 
 script:
   - nosetests --exe -v
-  - nosetests --exe --with-coverage --cover-package=app
   - coveralls
 
 after_success:
