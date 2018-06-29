@@ -3,6 +3,7 @@ import base64
 from datetime import datetime, timedelta
 import os
 
+
 class User(object):
     users = []
 
@@ -10,7 +11,9 @@ class User(object):
         self.email = email
         self.name = name
         self.phone = phone
-        self.password_hash = self.generate_password_hash(password)
+        self.password = password
+        self.password_hash = generate_password_hash(password)
+        self.ride_offers = []
         self.friends = []
         self.messages = []
         self.token = ""
@@ -29,6 +32,13 @@ class User(object):
 
     def check_password(self, password):
         return check_password_hash (self.password_hash, password)
+
+    @staticmethod
+    def get_user_by_email(email):
+        for user in User.users:
+            if user.email == email:
+                return user
+        return None
 
     def create_ride_offer(self):
         pass
@@ -54,36 +64,35 @@ class User(object):
         return user
 
     def __repr__(self):
-        return {'email':self.email,
+        return {'email': self.email,
                 'name': self.name,
-                'phone':self.phone,
+                'phone': self.phone,
+                'password': self.password
                 }
 
 
 class RideOffer(object):
-    ride_offers = []
+    rideOffers = []
 
-    def __init__(self, ride_id, driver_email, ride_date, departure_time,pick_up_point, destination, charges):
-        self.ride_id = ride_id
+    def __init__(self, driver_email, ride_date, departure_time,pick_up_point, destination, charges):
+        self.ride_id = ""
         self.driver_email = driver_email
         self.ride_date = ride_date
         self.departure_time = departure_time
         self.pick_up_point = pick_up_point
         self.destination = destination
         self.charges = charges
-        self.accepted_requests = []
-
-    def cancel(self):
-        pass
-
-    def create(self):
-        pass
-
-    def reschedule(self):
-        pass
+        self.ride_requests = []
 
     def respond_to_request(self, request_id):
         pass
+
+    @staticmethod
+    def get_ride_by_id(ride_id):
+        for ride in RideOffer.rideOffers:
+            if ride.ride_id == ride_id:
+                return ride
+        return None
 
     def __iter__(self):
         self.__index = -1
@@ -101,7 +110,7 @@ class RideOffer(object):
                 'ride_id':self.ride_id,
                 'driver_email':self.driver_email,
                 'ride_date':self.ride_date,
-                'departdure_time':self.departure_time,
+                'departure_time':self.departure_time,
                 'pick_up_point': self.pick_up_point,
                 'destination':self.destination,
                 'charges':self.charges
@@ -109,12 +118,12 @@ class RideOffer(object):
 
 
 class RideRequest(object):
-    ride_requests = []
+    rideRequests = []
 
-    def __init__(self):
-        self.request_id = ""
-        self.ride_offer_id = ""
-        self.user_email = ""
+    def __init__(self, ride_offer_id, user_email):
+        self.request_id = 0
+        self.ride_offer_id = ride_offer_id
+        self.user_email = user_email
         self.status = ()
 
     def cancel_request(self):
