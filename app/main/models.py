@@ -12,7 +12,7 @@ class User(object):
         self.name = name
         self.phone = phone
         self.password = password
-        self.password_hash = self.generate_password_hash(password)
+        self.password_hash = generate_password_hash(password)
         self.ride_offers = []
         self.friends = []
         self.messages = []
@@ -118,7 +118,7 @@ class RideOffer(object):
 
 
 class RideRequest(object):
-    riderequests = []
+    rideRequests = []
 
     def __init__(self, ride_offer_id, user_email):
         self.request_id = 0

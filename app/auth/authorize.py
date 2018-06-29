@@ -1,4 +1,4 @@
-from flask import g
+from flask import g, jsonify
 from flask_httpauth import HTTPBasicAuth
 from app.main.models import User
 # from app.api.errors import error_response
@@ -18,4 +18,8 @@ def verify_password(email, password):
 @basic_auth.error_handler
 def basic_auth_error():
     pass
+    message = {'message':'Unauthorized'}
+    response = jsonify(message)
+    response.status_code = 401
+    return response
     # return error_response(401)
