@@ -5,7 +5,7 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'aam786'
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI')
+    DATABASE_URI = os.getenv('DATABASE_URI')
 
 
 

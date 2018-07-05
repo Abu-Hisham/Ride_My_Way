@@ -1,8 +1,8 @@
 from flask import request, jsonify, g
 from flask_httpauth import HTTPBasicAuth
 from app.main import bp_main
-from app.main.models import User, RideRequest, RideOffer, UserSchema,RideOfferSchema, RideRequestSchema
-
+from app.main import db
+from app.main.models import User, RideRequest, RideOffer
 basic_auth = HTTPBasicAuth()
 
 
@@ -13,10 +13,8 @@ def create_user():
     if user is None:
         user = User(data['email'],data['name'],data['phone'], data['password'])
         user.password = ""
-        User.save(user)
-        userSchema = UserSchema()
-        usr = userSchema.dump(user)
-        message = { 'user': usr,
+        user.save()
+        message = { 'user': user.__repr__(),
                     'message': 'User Created Successfully'}
         response = jsonify(message)
         response.status_code = 201
@@ -73,19 +71,24 @@ def login():
 
 
 @bp_main.route('users/<string:user_email>/rides', methods = ['POST'])
-@basic_auth.login_required
+# @basic_auth.login_required
 def create_ride_offer(user_email, **kwargs):
     data = request.get_json()
     user = User.get_user_by_email(user_email)
-    rideOffer = RideOffer(data['driver_email'], data['ride_date'], data['departure_time'], data['pick_up_point'], data['destination'], data['charges'])
-    RideOffer.save(rideOffer)
-    rideOfferSchema = RideOfferSchema()
-    ride = rideOfferSchema.dump(rideOffer)
-    msg = {'ride_offer': ride,
-               'message':'Ride Offer Created Successfully'}
-    response = jsonify(msg)
-    response.status_code = 201
-    return response
+    if user:
+        rideOffer = RideOffer(data['driver_email'], data['ride_date'], data['departure_time'], data['pick_up_point'], data['destination'], data['charges'])
+        rideOffer.save()
+        msg = {'ride_offer': rideOffer.__repr__(),
+                   'message':'Ride Offer Created Successfully'}
+        response = jsonify(msg)
+        response.status_code = 201
+        return response
+    else:
+        msg = {'ride_offer':None,
+               'message': 'User Doesn\'t Exist'}
+        response = jsonify(msg)
+        response.status_code = 301
+        return response
 
 
 @bp_main.route('users/rides/<int:ride_id>', methods = ['GET'])
@@ -93,9 +96,7 @@ def create_ride_offer(user_email, **kwargs):
 def get_a_ride_offer(ride_id, **kwargs):
     ride_offer = RideOffer.get_ride_by_id(ride_id)
     if ride_offer:
-        rideOfferSchema = RideOfferSchema()
-        ride = rideOfferSchema.dump(ride_offer)
-        msg = {'ride_offer' : ride}
+        msg = {'ride_offer' : ride_offer}
         response = jsonify(msg)
         response.status_code = 200
         return response
@@ -110,11 +111,9 @@ def get_a_ride_offer(ride_id, **kwargs):
 def get_ride_offers():
     message = {}
     count = 1
-    rideOffers = RideOffer.query.all()
+    rideOffers = RideOffer.get_all_rides()
     for ride in rideOffers:
-        rideOfferSchema = RideOfferSchema()
-        ride = rideOfferSchema.dump(ride)
-        message[count] = ride
+        message[count] = ride.__repr__()
         count += 1
     response = jsonify(message)
     response.status_code = 200
@@ -122,28 +121,25 @@ def get_ride_offers():
 
 
 @bp_main.route('users/rides/<int:ride_id>/requests', methods = ['POST'])
-# @basic_auth.login_required
+#@basic_auth.login_required
 def request_ride(ride_id, **kwargs):
     data = request.get_json()
     rideRequest = RideRequest(ride_id, data['user_email'])
-    RideRequest.save(rideRequest)
-    rideRequestSchema = RideRequestSchema()
-    ride_request = rideRequestSchema.dump(rideRequest)
-    message = {'request': ride_request}
+    rideRequest.save()
+    message = {'request': rideRequest.__repr__()}
     response = jsonify(message)
     response.status_code = 201
     return response
+
 
 @bp_main.route('users/rides/<int:ride_id>/requests', methods = ['GET'])
 # @basic_auth.login_required
 def get_all_requests_for_an_offer(ride_id, **kwargs):
     message = {}
     count = 1
-    rideRequests = RideRequest.query.filter_by(ride_offer_id = ride_id)
+    rideRequests = RideRequest.get_requests_for_an_offer(ride_id)
     for ride_request in rideRequests:
-        rideRequestSchema = RideRequestSchema()
-        reqst = rideRequestSchema.dump(ride_request)
-        message[count] = reqst
+        message[count] = ride_request.__repr__()
         count += 1
     response = jsonify(message)
     response.status_code = 200

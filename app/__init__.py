@@ -5,9 +5,9 @@ from app.auth import bp_auth
 from app.main import bp_main
 from flask_sqlalchemy import SQLAlchemy
 from instance.config import app_config, Config, DevelopmentConfig
+from app.main import db
 
 
-db = SQLAlchemy()
 
 
 def create_app():
@@ -17,7 +17,7 @@ def create_app():
     app.register_blueprint(bp_auth, url_prefix="/app/v1/auth/")
     app.register_blueprint(bp_main, url_prefix="/app/v1/main/")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    db.init_app(app)
+    db.postgres_connection.init_app(app)
     return app
 
 

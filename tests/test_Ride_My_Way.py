@@ -33,9 +33,9 @@ class RideMyWayTestCase(unittest.TestCase):
         pass
 
     def test_duplicate_account_creation_fails(self):
-        # res1 = self.client.post('app/v1/main/users', data=json.dumps(self.user1.__repr__()), headers = {'content-type': 'application/json'})
+        #res1 = self.client.post('app/v1/main/users', data=json.dumps(self.user1.__repr__()), headers = {'content-type': 'application/json'})
         res2 = self.client.post('app/v1/main/users', data=json.dumps(self.user1.__repr__()), headers = {'content-type': 'application/json'})
-        self.assertNotEqual( res2.status_code, 201)
+        self.assertNotEqual(res2.status_code, 201)
 
     def test_user_can_create_ride_offer(self):
         # token = self.user1.get_token()
@@ -90,7 +90,7 @@ class RideMyWayTestCase(unittest.TestCase):
     #     self.assertEqual(res.status_code, 200)
     #     self.assertDictEqual(res.data, self.rideRequest.__repr__())
 
-    def tezarDown(self):
+    def tearDown(self):
             """teardown all initialized variables."""
             with self.app.app_context():
                 # drop all tables
