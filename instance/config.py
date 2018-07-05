@@ -5,6 +5,8 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'aam786'
     DEBUG = False
+    DATABASE_URI = os.getenv('DATABASE_URI')
+
 
 
 class DevelopmentConfig(Config):
@@ -22,6 +24,6 @@ class TestingConfig(Config):
 
 
 app_config = {
-             'development': DevelopmentConfig,
-             'testing': TestingConfig
-            }
+             "development": DevelopmentConfig,
+             "testing": TestingConfig
+             }
